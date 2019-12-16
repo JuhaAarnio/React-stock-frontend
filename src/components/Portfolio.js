@@ -1,25 +1,10 @@
 import React from 'react';
 
-/*class PortfolioContainer extends React.Component {
-  render() {
-    let containerStyle = {
-
-    };
-    return(
-        <div style={containerStyle}>
-          <Portfolio/>
-          <Portfolio/>
-          <Portfolio/>
-        </div>
-    )
-  }
-}
- */
 
 class Portfolio extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {name:''}
+    this.props = {name:''}
   }
   render() {
     let backgroundStyle = {
