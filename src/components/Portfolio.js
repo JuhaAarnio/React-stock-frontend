@@ -2,30 +2,27 @@ import React from 'react';
 
 
 class Portfolio extends React.Component {
-  constructor(props) {
-    super(props);
-    this.props = {name:''}
-  }
   render() {
+    const stockList = [];
     let backgroundStyle = {
       display: 'flex',
       flexDirection: 'column',
       color: 'blue',
-      width: '500px',
+      width: '100%',
       height: 'auto',
       border: '2px solid green'
     };
     return (
         <div style={backgroundStyle}>
-          <h>Portfolio</h>
-          <Stocks/>
+          <h1>{this.props.name}</h1>
+          {stockList}
           <Button/>
         </div>
 
     )
+
   }
 }
-
 class Stocks extends React.Component {
   render() {
     let stockStyle = {
@@ -36,12 +33,11 @@ class Stocks extends React.Component {
     };
     return (
         <div style={stockStyle}>
-          <h>Stock:{this.props.stockname}</h>
-          <h>Amount:{this.props.stockamount}</h>
-          <h>Price:{this.props.price}</h>
+          <h1>Stock:{this.props.stockname}</h1>
+          <h1>Amount:{this.props.stockamount}</h1>
+          <h1>Price:{this.props.price}</h1>
         </div>
     )
-
   }
 }
 

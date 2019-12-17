@@ -1,4 +1,5 @@
 import React from 'react';
+import Portfolio from "./Portfolio";
 
 class PortfolioForm extends React.Component {
   constructor(props) {
@@ -15,7 +16,7 @@ class PortfolioForm extends React.Component {
             Name:
             <input type="text" value={this.state.value} onChange={this.handleChange}/>
           </label>
-          <input type="submit" value="Create portfolio" />
+          <input type="submit" value="Create portfolio" onSubmit={this.handleSubmit}/>
         </form>
     );
   }
