@@ -1,11 +1,10 @@
 import React from 'react';
 import Portfolio from "./Portfolio";
-
+/*
 class PortfolioForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {value:'Portfolio name'}
-
   }
   handleChange = (event) => this.setState({value: event.target.value});
   handleSubmit = () => this.state.value;
@@ -20,6 +19,6 @@ class PortfolioForm extends React.Component {
         </form>
     );
   }
-}
+}*/
 
 export default PortfolioForm;
