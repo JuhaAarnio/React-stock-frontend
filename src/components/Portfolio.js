@@ -2,12 +2,22 @@ import React from 'react';
 
 
 class Portfolio extends React.Component {
+
   constructor(props) {
     super(props);
-    this.props = {name:''}
+    this.name = props.name;
+    this.state = {stockList: []};
   }
+  addStock = () => {
+    this.setState(state => {
+      console.log("Adding stocks");
+      const stockList = state.stockList.concat(<Stocks />);
+      return{
+         stockList
+      }
+    });
+  };
   render() {
-    const stockList = [];
     let backgroundStyle = {
       display: 'flex',
       flexDirection: 'column',
@@ -16,18 +26,30 @@ class Portfolio extends React.Component {
       height: 'auto',
       border: '2px solid green'
     };
+    let buttonStyle = {
+      width: '75px',
+      height: '35px',
+      color: 'light-blue'
+    };
     return (
         <div style={backgroundStyle}>
           <h1>{this.props.name}</h1>
-          {stockList}
-          <Button/>
+          {this.state.stockList}
+          <button style={buttonStyle} onClick = {this.addStock}>Add Stock</button>
+          <input type="text"/>
+          <input type="text"/>
         </div>
-
-    )
+    );
 
   }
 }
 class Stocks extends React.Component {
+  constructor(props) {
+    super(props);
+    this.stockname = props.stockname;
+    this.stockamount = props.stockamount;
+    this.price = props.price;
+  }
   render() {
     let stockStyle = {
       display: 'flex',
@@ -35,6 +57,7 @@ class Stocks extends React.Component {
       border: '2px solid blue',
       paddingTop: '5px'
     };
+
     return (
         <div style={stockStyle}>
           <h1>Stock:{this.props.stockname}</h1>
@@ -44,20 +67,4 @@ class Stocks extends React.Component {
     )
   }
 }
-
-class Button extends React.Component {
-  render() {
-    let buttonStyle = {
-      width: '75px',
-      height: '35px',
-      color: 'light-blue'
-    };
-    return (
-        <div>
-          <button style={buttonStyle}>Add stock</button>
-        </div>
-    )
-  }
-}
-
 export default Portfolio;
