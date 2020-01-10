@@ -6,14 +6,15 @@ class App extends React.Component{
 
   constructor(props) {
     super(props);
-    this.state = {portfolioList:  []};
+    this.state = {
+      portfolioList:  [],
+      name: ''
+    };
   }
-  handleChange = (event) => this.setState({value: event.target.value});
+  handleChange = (evt) => this.setState({name: evt.target.value});
   handleSubmit = () => {
     this.setState(state => {
-      const portfolioList = state.portfolioList.concat(<Portfolio name = {"Test"}/>);
-      console.log("Creating portfolio");
-      console.log(this.state.portfolioList.length);
+      const portfolioList = state.portfolioList.concat(<Portfolio name = {this.state.name}/>);
       return {
         portfolioList
       };
@@ -24,7 +25,7 @@ class App extends React.Component{
         <div className="App">
           <label>
             Create portfolio:
-            <input type="text" value="portfolio name" onChange={this.handleChange}/>
+            <input type="text" value={this.state.name} onChange={evt => this.handleChange(evt)}/>
           </label>
           <button onClick={this.handleSubmit}>Add portfolio</button>
           {this.state.portfolioList}
