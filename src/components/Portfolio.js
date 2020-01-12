@@ -5,6 +5,7 @@ class Portfolio extends React.Component {
   constructor(props) {
     super(props);
     this.name = props.name;
+    this.stocks = props.stockList;
     this.state = {stockList: []};
   }
   addStock = () => {
@@ -69,8 +70,18 @@ class SharesForm extends React.Component {
       date: ''
     };
   }
-  submitRequest = () => {
-
+  submitRequest = (symbol, amount, date) => {
+    let url = 'https://cloud.iexapis.com/stable/' + symbol + '/' + 'token=pk_c0b9268c90df41fb8a6a629f87e42a5c';
+    let request = new XMLHttpRequest();
+    request.open('GET', url);
+    request.onload = generateStocks;
+    request.send();
+    function generateStocks() {
+      if(this.status === 200){
+        let data = JSON.parse(this);
+        let stockData = [];
+      }
+    }
   };
   updateFieldSymbol = (evt) => {
     this.setState({
@@ -97,7 +108,7 @@ class SharesForm extends React.Component {
         <div>
           <h1>{this.props.name}</h1>
           {this.state.stockList}
-          <button style={buttonStyle} onClick = {this.addStock}>Add Stock</button>
+          <button style={buttonStyle} onClick = {this.submitRequest(this.state.symbol, this.state.amount, this.state.date)}>Add Stock</button>
           <input type="text" value={this.state.symbol} onChange={evt => {this.updateFieldSymbol(evt)}}/>
           <input type="text" value={this.state.amount} onChange={evt => {this.updateFieldAmount(evt)}}/>
           <input type="text" value={this.state.date} onChange={evt => {this.updateFieldDate(evt)}}/>
