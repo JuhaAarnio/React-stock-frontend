@@ -41,7 +41,8 @@ class Stocks extends React.Component {
     super(props);
     this.stockname = props.stockname;
     this.stockamount = props.stockamount;
-    this.price = props.price;
+    this.buyingPrice = props.buyingPrice;
+    this.currentPrice = props.currentPrice;
   }
   render() {
     let stockStyle = {
@@ -71,7 +72,7 @@ class SharesForm extends React.Component {
     };
   }
   submitRequest = (symbol, amount, date) => {
-    let url = 'https://cloud.iexapis.com/stable/' + symbol + '/' + 'token=pk_c0b9268c90df41fb8a6a629f87e42a5c';
+    let url = 'https://cloud.iexapis.com/stable/stock/' + symbol + '/chart/date/' + date + '/' + 'token=pk_c0b9268c90df41fb8a6a629f87e42a5c';
     let request = new XMLHttpRequest();
     request.open('GET', url);
     request.onload = generateStocks;
@@ -79,7 +80,11 @@ class SharesForm extends React.Component {
     function generateStocks() {
       if(this.status === 200){
         let data = JSON.parse(this);
-        let stockData = [];
+        let closeValue = data[0]['uClose'];
+        console.log(closeValue);
+      }
+      else{
+        console.log("Failed request");
       }
     }
   };
