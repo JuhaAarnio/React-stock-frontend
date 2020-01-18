@@ -3,7 +3,6 @@ import './App.css';
 import Portfolio from "./components/Portfolio";
 
 class App extends React.Component{
-
   constructor(props) {
     super(props);
     this.state = {

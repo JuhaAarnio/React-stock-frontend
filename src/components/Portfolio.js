@@ -5,7 +5,6 @@ class Portfolio extends React.Component {
   constructor(props) {
     super(props);
     this.name = props.name;
-    this.stocks = props.stockList;
     this.state = {stockList: []};
   }
   addStock = () => {
@@ -41,8 +40,19 @@ class Stocks extends React.Component {
     super(props);
     this.stockname = props.stockname;
     this.stockamount = props.stockamount;
+<<<<<<< HEAD
     this.buyingPrice = props.buyingPrice;
     this.currentPrice = props.currentPrice;
+=======
+    this.price = props.price;
+    this.currentPrice = props.currentPrice;
+    this.state = {
+      stockname: '',
+      stockamount:'',
+      price: '',
+      currentPrice: ''
+    }
+>>>>>>> 364d66e5ee4ae7b23edb117664406815e92bf692
   }
   render() {
     let stockStyle = {
@@ -51,12 +61,11 @@ class Stocks extends React.Component {
       border: '2px solid blue',
       paddingTop: '5px'
     };
-
     return (
         <div style={stockStyle}>
-          <h1>Stock:{this.props.stockname}</h1>
-          <h1>Amount:{this.props.stockamount}</h1>
-          <h1>Price:{this.props.price}</h1>
+          <h1>Stock:{this.state.stockname}</h1>
+          <h1>Amount:{this.state.stockamount}</h1>
+          <h1>Price:{this.state.price}</h1>
         </div>
     )
   }
@@ -72,7 +81,12 @@ class SharesForm extends React.Component {
     };
   }
   submitRequest = (symbol, amount, date) => {
+<<<<<<< HEAD
     let url = 'https://cloud.iexapis.com/stable/stock/' + symbol + '/chart/date/' + date + '/' + 'token=pk_c0b9268c90df41fb8a6a629f87e42a5c';
+=======
+    let url = 'https://cloud.iexapis.com/stable/stock/' + symbol + '/chart/date/' + date + '?token=pk_c0b9268c90df41fb8a6a629f87e42a5c';
+    console.log(url);
+>>>>>>> 364d66e5ee4ae7b23edb117664406815e92bf692
     let request = new XMLHttpRequest();
     request.open('GET', url);
     request.onload = generateStocks;
@@ -112,11 +126,12 @@ class SharesForm extends React.Component {
     return (
         <div>
           <h1>{this.props.name}</h1>
-          {this.state.stockList}
-          <button style={buttonStyle} onClick = {this.submitRequest(this.state.symbol, this.state.amount, this.state.date)}>Add Stock</button>
+          <input type="text" value={this.state.symbol} onChange={evt => {this.updateFieldSymbol(evt)}}/>
+          <input type="text" value={this.state.amount} onChange={evt => {this.updateFieldAmount(evt)}}/>
           <input type="text" value={this.state.symbol} onChange={evt => {this.updateFieldSymbol(evt)}}/>
           <input type="text" value={this.state.amount} onChange={evt => {this.updateFieldAmount(evt)}}/>
           <input type="text" value={this.state.date} onChange={evt => {this.updateFieldDate(evt)}}/>
+          <button style={buttonStyle} onClick = {() => this.submitRequest(this.state.symbol, this.state.amount, this.state.date)}>Add Stock</button>
         </div>
     )
   }
