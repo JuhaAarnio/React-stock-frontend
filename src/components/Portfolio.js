@@ -9,8 +9,21 @@ class Portfolio extends React.Component {
       stockList: [],
       symbol: '',
       amount: '',
-      date: ''
+      date: '',
+      totalValue: ''
     };
+  }
+  calculateTotalValue = () => {
+    for(let i = 0; i < this.state.stockList.length; i++){
+      let sum =+ this.state.stockList[i];
+      console.log(sum);
+      this.setState(state => {
+        state.totalValue = sum;
+      })
+    }
+  };
+  componentDidMount() {
+    this.calculateTotalValue();
   }
   addStock = (symbol, amount, price, currPrice, date) => {
     this.setState(state => {
@@ -76,11 +89,13 @@ class Portfolio extends React.Component {
         <div style={backgroundStyle}>
           <h1>{this.props.name}</h1>
           {this.state.stockList}
+          <h1>Total Value: {this.state.totalValue}</h1>
           <div>
             <input type="text" value={this.state.symbol} onChange={evt => {this.updateFieldSymbol(evt)}}/>
             <input type="text" value={this.state.amount} onChange={evt => {this.updateFieldAmount(evt)}}/>
             <input type="text" value={this.state.date} onChange={evt => {this.updateFieldDate(evt)}}/>
             <button style={buttonStyle} onClick = {() => this.submitRequest(this.state.symbol, this.state.amount, this.state.date)}>Add Stock</button>
+            <button onClick={this.calculateTotalValue}>Calculate</button>
           </div>
         </div>
     );

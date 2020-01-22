@@ -7,7 +7,8 @@ class App extends React.Component{
     super(props);
     this.state = {
       portfolioList:  [],
-      name: ''
+      name: '',
+      totalValue: ''
     };
   }
   handleChange = (evt) => this.setState({name: evt.target.value});
@@ -28,6 +29,7 @@ class App extends React.Component{
           </label>
           <button onClick={this.handleSubmit}>Add portfolio</button>
           {this.state.portfolioList}
+          <h1>Total Value: {this.totalValue}</h1>
         </div>
     );
   }
