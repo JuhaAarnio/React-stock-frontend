@@ -5,31 +5,29 @@ class Portfolio extends React.Component {
   constructor(props) {
     super(props);
     this.name = props.name;
+    this.idKey = props.idKey;
+    this.deleteFunc = props.deleteFunc;
     this.state = {
       stockList: [],
       symbol: '',
       amount: '',
       date: '',
-      totalValue: ''
+      totalValue: 0
     };
   }
-  calculateTotalValue = () => {
-    for(let i = 0; i < this.state.stockList.length; i++){
-      let sum =+ this.state.stockList[i];
-      console.log(sum);
-      this.setState(state => {
-        state.totalValue = sum;
-      })
-    }
+  calculateTotalValue = (price) => {
+    let sum = price;
+    console.log(sum);
+    this.setState(state => {
+      state.totalValue += sum;
+    })
   };
-  componentDidMount() {
-    this.calculateTotalValue();
-  }
-  addStock = (symbol, amount, price, currPrice, date) => {
+  addStock = (symbol, amount, price, currPrice, date, calc) => {
     this.setState(state => {
       console.log("Adding stocks");
-      const stockList = state.stockList.concat(<Stocks stockName = {symbol} stockAmount = {amount} price = {price}
-                                                currentPrice = {currPrice} date = {date} />);
+      let stock = <Stocks stockName = {symbol} stockAmount = {amount} price = {price}
+                          currentPrice = {currPrice} date = {date} calc = {calc}/>;
+      const stockList = state.stockList.concat(stock);
       return{
          stockList
       }
@@ -54,7 +52,7 @@ class Portfolio extends React.Component {
         console.log("Failed request");
       }
     }
-    this.addStock(symbol, amount, closeValue, currPrice, date);
+    this.addStock(symbol, amount, closeValue, currPrice, date, this.calculateTotalValue);
   };
   updateFieldSymbol = (evt) => {
     this.setState({
@@ -95,13 +93,12 @@ class Portfolio extends React.Component {
             <input type="text" value={this.state.amount} onChange={evt => {this.updateFieldAmount(evt)}}/>
             <input type="text" value={this.state.date} onChange={evt => {this.updateFieldDate(evt)}}/>
             <button style={buttonStyle} onClick = {() => this.submitRequest(this.state.symbol, this.state.amount, this.state.date)}>Add Stock</button>
-            <button onClick={this.calculateTotalValue}>Calculate</button>
+            <button onClick={() => this.deleteFunc(this.props.idKey)}>Delete portfolio</button>
           </div>
         </div>
     );
   }
 }
-
 class Stocks extends React.Component {
   constructor(props) {
     super(props);
@@ -110,6 +107,7 @@ class Stocks extends React.Component {
     this.price = props.price;
     this.currentPrice = props.currentPrice;
     this.date = props.date;
+    this.calc = props.calc;
     this.state = {
       stockName: '',
       stockAmount:'',
@@ -118,6 +116,10 @@ class Stocks extends React.Component {
       date: ''
     }
   }
+  componentDidMount() {
+    this.calc(this.price * this.stockAmount);
+  }
+
   render() {
     let stockStyle = {
       display: 'flex',

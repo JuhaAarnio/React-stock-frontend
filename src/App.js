@@ -11,10 +11,24 @@ class App extends React.Component{
       totalValue: ''
     };
   }
+  deletePortfolio = (key) => {
+    console.log("Deleting portfolio {}", key);
+    for(let i = 0; i < this.state.portfolioList.length; i++){
+      if(this.state.portfolioList[i].props.idKey === key){
+        this.setState(state => {
+          const portfolioList = state.portfolioList.splice(i, 1);
+          return{
+            portfolioList
+          }
+        });
+      }
+    }
+  };
   handleChange = (evt) => this.setState({name: evt.target.value});
   handleSubmit = () => {
     this.setState(state => {
-      const portfolioList = state.portfolioList.concat(<Portfolio name = {this.state.name}/>);
+      let key = this.state.portfolioList.length;
+      const portfolioList = state.portfolioList.concat(<Portfolio name = {this.state.name} idKey = {key} deleteFunc = {this.deletePortfolio}/>);
       return {
         portfolioList
       };
