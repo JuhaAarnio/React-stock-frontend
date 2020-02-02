@@ -8,27 +8,47 @@ class App extends React.Component{
     this.state = {
       portfolioList:  [],
       name: '',
-      totalValue: ''
+      totalValue: 0
     };
   }
+  // Passed down to portfolio-object. Calculates total value of all portfolios combined.
+  calculateTotalValue = (price) => {
+    let sum = price;
+    console.log(sum);
+    this.setState(state => {
+      state.totalValue += sum;
+    })
+  };
   deletePortfolio = (key) => {
     console.log("Deleting portfolio {}", key);
-    for(let i = 0; i < this.state.portfolioList.length; i++){
-      if(this.state.portfolioList[i].props.idKey === key){
-        this.setState(state => {
-          const portfolioList = state.portfolioList.splice(i, 1);
-          return{
-            portfolioList
-          }
-        });
+    this.setState(state =>{
+      const portfolioList = state.portfolioList.filter(parseKeys);
+      return{
+        portfolioList
       }
+    });
+    function parseKeys(item) {
+      return item.props.idKey !== key;
     }
+
+  };
+  componentWillUnmount() {
+    this.saveState();
+  }
+  componentDidMount() {
+    this.loadState();
+  }
+  loadState = () => {
+    JSON.parse(localStorage.getItem('Portfolios'));
+  };
+  saveState = () => {
+    localStorage.setItem('Portfolios', JSON.stringify(this.state.portfolioList));
   };
   handleChange = (evt) => this.setState({name: evt.target.value});
   handleSubmit = () => {
     this.setState(state => {
       let key = this.state.portfolioList.length;
-      const portfolioList = state.portfolioList.concat(<Portfolio name = {this.state.name} idKey = {key} deleteFunc = {this.deletePortfolio}/>);
+      const portfolioList = state.portfolioList.concat(<Portfolio name = {this.state.name} idKey = {key} deleteFunc = {this.deletePortfolio} calc = {this.calculateTotalValue}/>);
       return {
         portfolioList
       };
@@ -43,7 +63,7 @@ class App extends React.Component{
           </label>
           <button onClick={this.handleSubmit}>Add portfolio</button>
           {this.state.portfolioList}
-          <h1>Total Value: {this.totalValue}</h1>
+          <h1>Total Value: {this.state.totalValue}</h1>
         </div>
     );
   }

@@ -7,14 +7,23 @@ class Portfolio extends React.Component {
     this.name = props.name;
     this.idKey = props.idKey;
     this.deleteFunc = props.deleteFunc;
+    this.calc = props.calc;
     this.state = {
       stockList: [],
-      symbol: '',
-      amount: '',
-      date: '',
+      symbol: 'Stock symbol',
+      amount: 'Number of stocks',
+      date: 'DD-MM-YYYY',
       totalValue: 0
     };
   }
+  componentDidMount() {
+    this.calc(this.state.totalValue);
+  }
+  componentWillUnmount() {
+    this.calc(-this.state.totalValue);
+  }
+
+  // This function is passed down to Stocks-object. Calculates total value of a portfolio.
   calculateTotalValue = (price) => {
     let sum = price;
     console.log(sum);
@@ -22,37 +31,56 @@ class Portfolio extends React.Component {
       state.totalValue += sum;
     })
   };
-  addStock = (symbol, amount, price, currPrice, date, calc) => {
+  addStock = (key, symbol, amount, price, date, calc, deleteFunc) => {
     this.setState(state => {
       console.log("Adding stocks");
-      let stock = <Stocks stockName = {symbol} stockAmount = {amount} price = {price}
-                          currentPrice = {currPrice} date = {date} calc = {calc}/>;
+      let stock = <Stocks idKey={key} stockName = {symbol} stockAmount = {amount} price = {price}
+                           date = {date} calc = {calc} deleteFunc = {deleteFunc}/>;
       const stockList = state.stockList.concat(stock);
       return{
          stockList
       }
     });
   };
+  deleteStock = (key) => {
+    this.setState(state=> {
+      const stockList = state.stockList.filter(parseKeys);
+      return{
+        stockList
+      }
+    });
+    function parseKeys(item) {
+      return  item.props.idKey !== key;
+    }
+  };
   submitRequest = (symbol, amount, date) => {
-    let url = 'https://cloud.iexapis.com/stable/stock/' + symbol + '/chart/date/' + date + '?token=pk_c0b9268c90df41fb8a6a629f87e42a5c';
+    date = date.replace(/\D/g,'');
+    let year = date.substring(4,8);
+    let month = date.substring(2,4);
+    let day = date.substring(0,2);
+    let iexDate = year + month + day;
+    let url = 'https://cloud.iexapis.com/stable/stock/' + symbol + '/chart/date/' + iexDate + '?token=pk_c0b9268c90df41fb8a6a629f87e42a5c';
     console.log(url);
     let request = new XMLHttpRequest();
     request.open('GET', url);
-    request.onload = generateStocks;
-    request.send();
-    let currPrice = 0;
-    let closeValue = 2;
-    function generateStocks () {
-      if(this.status === 200){
+    request.onload = () => {
+      if(request.status === 200){
         let data = JSON.parse(request.response);
-        closeValue = data[0]['close'];
-        console.log(closeValue);
+        if(data.length === 0){
+          console.log("No stock data found");
+          alert("No stock data found for given date, try another date!")
+        }
+        else {
+          let closeValue = data[0]['close'];
+          let key = this.state.stockList.length;
+          this.addStock(key, symbol, amount, closeValue, date, this.calculateTotalValue, this.deleteStock);
+        }
       }
       else{
         console.log("Failed request");
       }
-    }
-    this.addStock(symbol, amount, closeValue, currPrice, date, this.calculateTotalValue);
+    };
+    request.send();
   };
   updateFieldSymbol = (evt) => {
     this.setState({
@@ -99,27 +127,54 @@ class Portfolio extends React.Component {
     );
   }
 }
+// Stocks-component
 class Stocks extends React.Component {
   constructor(props) {
     super(props);
+    this.idKey = props.idKey;
     this.stockName = props.stockName;
     this.stockAmount = props.stockAmount;
     this.price = props.price;
-    this.currentPrice = props.currentPrice;
     this.date = props.date;
     this.calc = props.calc;
+    this.deleteFunc = props.deleteFunc;
     this.state = {
       stockName: '',
       stockAmount:'',
       price: '',
-      currentPrice: '',
+      currentPrice: '999',
       date: ''
     }
   }
   componentDidMount() {
     this.calc(this.price * this.stockAmount);
+    this.updateCurrentPrice(this.stockName);
+  }
+  componentWillUnmount() {
+    this.calc(-this.price * this.stockAmount);
   }
 
+  updateCurrentPrice = (symbol) => {
+    let url = 'https://cloud.iexapis.com/stable/stock/' + symbol + '/quote?token=pk_c0b9268c90df41fb8a6a629f87e42a5c';
+    console.log(url);
+    let request = new XMLHttpRequest();
+    request.open('GET', url);
+    request.onload = () => {
+      if(request.status === 200){
+        let data = JSON.parse(request.response);
+        let currentPrice = data['close'];
+        console.log(currentPrice);
+        this.setState(state => {
+          state.currentPrice = currentPrice;
+        });
+      }
+      else{
+        console.log('Request for current price failed');
+        alert("Request for current price failed!")
+      }
+    };
+    request.send()
+  };
   render() {
     let stockStyle = {
       display: 'flex',
@@ -133,6 +188,7 @@ class Stocks extends React.Component {
           <h1>Amount:{this.stockAmount}</h1>
           <h1>Price at the time of sale:{this.price * this.stockAmount}</h1>
           <h1>Current price:{this.currentPrice * this.stockAmount}</h1>
+          <button onClick={() => this.deleteFunc(this.props.idKey)}>Delete Stock</button>
         </div>
     )
   }
